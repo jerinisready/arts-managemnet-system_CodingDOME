@@ -1,0 +1,68 @@
+{% extends 'adminlte/base.html' %}
+
+
+{% block title %} My Index Page {% endblock %}
+
+
+{% block content %}
+
+<div class="row">
+
+    <div class="col-sm-12 ">
+        <div class="box">
+            <div class="box-footer">
+                <h3>{{ object.title }}</h3>
+            </div>
+            <div class="box-body">
+                <p>{{ object.description|default:"-" }}</p>
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Registration Before</th>
+                        <th>{{ object.registration_closes_at }}</th>
+                    </tr>
+                    <tr>
+                        <th>Event Start's At</th>
+                        <th>{{ object.starts_at }}</th>
+                    </tr>
+                    <tr>
+                        <th>Event End's At</th>
+                        <th>{{ object.ends_at }}</th>
+                    </tr>
+                </table>
+                {% if not is_registered %}
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        Do you want to register to this event?? <br>
+                        <input type="submit" class="btn btn-success btn-sm float-right " value="YES! Register">
+                    </form>
+                {% else %}
+                <div class="alert alert-success">
+                    You already have Registered to this event!
+                </div>
+                {% endif %}
+
+            </div>
+            <div class="box-footer">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Participant</th>
+                        <th>Position</th>
+                    </tr>
+                    {% for regn in object.registration_set.all %}
+                    <tr>
+                        <td>{{ regn.user.get_full_name|default:regn.user.username }}</td>
+                        <td>{{ regn.position|default:"-" }}  {% if regn.point > 0 %}( {{ regn.point }} Points) {% endif %}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="100%">There are no participants currently registered!</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
